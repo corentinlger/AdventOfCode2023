@@ -1,3 +1,12 @@
+# TODO : Still check all the numbers, and find what special symbols they have adjacent
+# All the numbers that share a similar special symbol constitute a gear ratio and we return their multiplication
+# Would need to modify the precedent functions because we wanna return all the positions of all special symbols adjacent to a part number 
+# wanna have a data structure where I check if a position has different adjacent numbers 
+# Create a dictionnary with positions as keys and a list of numbers as values 
+
+from collections import defaultdict
+
+
 def parse_schematic(schematic):
     lines = schematic.strip().split('\n')
     grid = [list(line) for line in lines]
@@ -73,9 +82,7 @@ def check_adjacent_digit(grid, position, rows, cols):
         
     return False
 
-    
-if __name__ == '__main__':
-    text_file_path = 'data/day3.txt'
+def get_result_part_1(text_file_path):
     grid = get_grid(text_file_path)
 
     ROWS = len(grid)
@@ -94,5 +101,98 @@ if __name__ == '__main__':
                     if part_number:
                         sum += part_number
 
+    return sum
+
+# Functions for part2 results 
+
+def check_adjacent_get_symbols_position(grid, position, rows, cols):
+    DIRECTIONS = [[-1, 1],
+                    [0, 1],
+                    [1, 1],
+                    [1, 0],
+                    [1, -1],
+                    [0, -1],
+                    [-1, -1],
+                    [-1,0]]
+    
+    symbols_position = []
+    r, c = position 
+
+    for dpos in DIRECTIONS:
+        dr, dc = dpos
+        neighboor_r = r + dr 
+        neighboor_c = c + dc 
+        if 0 <= neighboor_r < rows and 0 <= neighboor_c < cols:
+            if is_special_symbol(grid[neighboor_r][neighboor_c]):
+                symbols_position.append((neighboor_r, neighboor_c))
+        
+    return symbols_position
+
+def check_part_number_get_symbols_position(grid, number, position, max_rows, max_cols):
+    r, c = position
+    adjacent_symbol_positions = set()
+    for dc in range(len(number)):
+        col = c + dc 
+        digit_positon = r, col
+        digit_adjacent_symbol_positions = check_adjacent_get_symbols_position(grid, digit_positon, max_rows, max_cols)
+        if digit_adjacent_symbol_positions:
+            for position in digit_adjacent_symbol_positions:
+                adjacent_symbol_positions.add(position)
+        
+    return [int(number), adjacent_symbol_positions]
+
+def multiply_list(num_list):
+    prod = 1 
+    for num in num_list:
+        prod *= num
+
+    return prod 
+
+def get_gear_ratio_sum(symbol_positions_and_adjacent_numbers):
+    sum = 0 
+    for position in symbol_positions_and_adjacent_numbers:
+        numbers = symbol_positions_and_adjacent_numbers[position]
+        if len(numbers) > 1:
+            sum += multiply_list(numbers)
+
+    return sum
+
+def get_result_part_2(text_file_path):
+    grid = get_grid(text_file_path)
+
+    ROWS = len(grid)
+    COLS = len(grid[0])
+
+    visited = set()
+    symbol_positions_and_adjacent_numbers = defaultdict(list)
+
+    for row in range(ROWS):
+        for col in range(COLS):
+            if (row, col) not in visited:
+                number, position = find_number(grid, row, col, COLS)
+                if number:
+                    visited = update_visited(number, position, visited)
+                    part_number, symbols_position = check_part_number_get_symbols_position(grid, number, position, ROWS, COLS)
+                    if symbols_position:
+                        for position in symbols_position:
+                            symbol_positions_and_adjacent_numbers[position].append(part_number)
+
+    sum = get_gear_ratio_sum(symbol_positions_and_adjacent_numbers)
+
+    return sum
+
+    
+if __name__ == '__main__':
+
+    text_file_path = 'data/day3.txt'
+
+    # Part 1 
+    sum = get_result_part_1(text_file_path)
     print(sum)
+
+    # Part 2
+    sum = get_result_part_2(text_file_path)
+    print(sum)
+
+    
 
