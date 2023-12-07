@@ -1,11 +1,4 @@
-# TODO : Still check all the numbers, and find what special symbols they have adjacent
-# All the numbers that share a similar special symbol constitute a gear ratio and we return their multiplication
-# Would need to modify the precedent functions because we wanna return all the positions of all special symbols adjacent to a part number 
-# wanna have a data structure where I check if a position has different adjacent numbers 
-# Create a dictionnary with positions as keys and a list of numbers as values 
-
 from collections import defaultdict
-
 
 def parse_schematic(schematic):
     lines = schematic.strip().split('\n')
