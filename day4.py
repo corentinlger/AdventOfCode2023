@@ -44,7 +44,6 @@ def get_result_part_1(text_file_path):
     sum = 0
     idx = 1
     while True:
-    # for _ in range(5):
         line = file.readline().strip()
         if not line:
             break

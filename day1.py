@@ -34,7 +34,6 @@ def valid_string_from_right(string, idx):
         
     return None
 
-
 def get_first_last_digits(string):
     l, r = 0, len(string) - 1
     digit1 = digit2 = None 
@@ -55,7 +54,6 @@ def get_number_from_string(string):
     number = int(txt_number)
 
     return number 
-
 
 def calculate_sum(text_file):
     sum = 0 
